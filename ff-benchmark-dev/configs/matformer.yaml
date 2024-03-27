@@ -1,0 +1,79 @@
+#IMPORTANT ONES:
+# JARVIS: train_prop_model(learning_rate=0.001,name="matformer", prop=props[0], pyg_input=True, n_epochs=500, batch_size=64, use_lattice=True, output_dir="./matformer_jarvis_formation_energy", use_angle=False, save_dataloader=False)
+# MP: train_prop_model(learning_rate=0.001,name="pygatt", dataset="megnet", prop=props[0], pyg_input=True, n_epochs=500, batch_size=64, use_lattice=True, output_dir="./matformer_mp_formation", use_angle=False, save_dataloader=False)
+
+output_dir: matformer_output_no_corrections
+checkpoint_dir: checkpoints/matformer_no_corrections
+pyg_input: True
+use_lattice: True
+save_dataloader: False
+learning_rate: 1e-3
+
+model:
+  name: matformer
+  use_zbl_repulsion: True
+  use_electrostatics: True
+  long_range_only: True
+  use_d4_dispersion: True
+  compute_d4_atomic: False
+  learnable_parameters: False
+  cutoff: 8
+  use_angle: False
+  ######################################### Ewald message passing hyperparameters
+  use_ewald: False
+  use_pbc: False
+  num_k_x: 5                              # Frequency cutoff [Å^-1]
+  num_k_y: 5                              # Voxel grid resolution [Å^-1]
+  num_k_z: 5                              # Gaussian radial basis size (Fourier filter)
+  downprojection_size: 8                  # Size of linear bottleneck layer
+  num_hidden: 3                           # Number of residuals in update function
+  k_cutoff: 0.4                           # Frequency cutoff [Å^-1]
+  delta_k: 0.2                            # Voxel grid resolution [Å^-1]
+  num_k_rbf: 1                            # Gaussian radial basis size (Fourier filter)
+  #########################################
+cutoff: 8
+use_angle: False
+
+#TODO: DONT KNOW WHERE IS LOADING CHECKPOINT, BUT I ADDED WITH THE CHECKPOINT PARAMTER OF THE CALL
+# checkpoint_dir: checkpoint  # directory for checkpoints
+
+dataset: dft_3d
+# JARVIS dataset: dft_3d
+# MP dataset: megnet
+target: formation_energy_peratom
+# JARVIS dataset entries: formation_energy_peratom, mbj_bandgap, optb88vdw_bandgap, optb88vdw_total_energy, ehull
+# MP dataset entries: e_form, gap pbe
+# If using custom dataset, please set this to the corresponding entry name, e.g., target
+
+atom_features: cgcnn
+
+epochs: 500 # 300
+batch_size: 64
+num_workers: 4
+weight_decay: 0.005
+
+criterion: mse
+optimizer: adamw
+scheduler: onecycle
+
+pin_memory: False
+write_checkpoint: True
+write_predictions: True
+store_outputs: True
+progress: True
+log_tensorboard: False
+
+standarize: False  
+line_graph: True  
+filename: sample
+use_canonize: False
+max_neighbors: 12
+neighbor_strategy: k-nearest
+# classification_threshold: 
+# target_multiplication_factor
+# output_features: 1 # NOT BEING USED
+# output_dir: None
+matrix_input: False
+use_save: True
+#mp_id_list: None # Always none in Matformer, TODO: Check again
+use_wandb: False
